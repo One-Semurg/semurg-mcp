@@ -1,9 +1,11 @@
-<!-- Generated from the Semurg source of release r11.87.20261014.d451f9b. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.88.20261014.06756f3. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
 
 ## Install a node
+
+Before you install: Semurg runs on Intel and AMD x86_64 processors with AVX2 or newer, on Linux directly, or on Windows through WSL2 or Docker. There is no Mac or ARM build yet (a Mac version is coming); on a Mac, run the node on a Linux machine you can reach. The installer needs root.
 
 One command, on a Linux machine you control. The first line shows the script without running it.
 
@@ -26,7 +28,7 @@ Claude Code: one user-scope entry, written by Claude Code's own command. Run it 
     claude mcp add-json --scope user semurg '{"type":"http","url":"http://127.0.0.1:4000/v1/mcp","headers":{"Authorization":"Bearer ${SEMURG_API_TOKEN}","X-Semurg-Scope":"default"}}'
     # Claude Code reads the token from the SEMURG_API_TOKEN environment variable when it starts
 
-Connected on release r11.83.20261013.c03a884: Claude Code's own client listed every memory tool that release served.
+Connected on release r11.87.20261014.d451f9b: Claude Code's own client listed every memory tool that release served.
 
 Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04) or with the Docker image; otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
 
@@ -75,10 +77,13 @@ Parameters:
 Recall what is stored about ONE entity: finds the entity named `subject` by its name, exact or a similar spelling or letter case ("paris" finds Paris, "Dan" finds Dana), or one whole word of a longer name ("Priya" finds Priya Raman; small English words such as "the" or "of" never match on their own), walks the graph from it and returns the connected facts in both directions (`direction` outbound or inbound), each with its `citation` (`citation.source`: `kind` document, or asserted for a fact an agent sent without text; the `doc_id` of the document it was read from; the `name` label it was stored under; `ingested_at`. `citation.span`: the sentence quoted from that document, `start` and `end` in Unicode code points of its full text, checked before it is served, or null with `span_state` saying why. `citation.found_by`: how it was found), its `source_date` when one was stored, and the seed that found it (`seed`: exact, name or type). Always current: a fact stored a moment ago is visible. The reply carries `state`: answered, nothing_stored (the name matched nothing: an explicit empty answer, never an invented one) or could_not_judge (a stage could not run, named in `detail`); `seeding` says what each stage did, and `meaning` reads not_armed until an embedding model is armed (searching by meaning is not available until then). `source_id` is the id of the node the item is made from (a passage: its chunk; a fact: the entity at its other end; an entity or type: itself), NOT of the document that sources it: that is `citation.source.doc_id`. Read-only. Ids (`source_id`, `seed_id`, `citation.source.doc_id`) are decimal STRINGS of a 64-bit unsigned integer: send them back unchanged and never convert them to a number (a JavaScript Number cannot hold one).
 
 Parameters:
+- as_of (string): Read the memory as it was KNOWN at this instant (ISO 8601 date or date-time; a bare date is the end of that day UTC): a fact stored after it is not visible. Leave it out for now.
 - attribute (object): Find entities BY an attribute's current value, instead of by name: {"key": "ndis_number", "value": "430000001"} (optionally "type"). Only this scope is searched, the end user's own when user_id is set. Send it instead of subject.
+- compact (boolean): true: each item ONCE (text, kind, the fact's subject / relation / object, doc_id, source, date, score, seed) without the retrieval diagnostics (chunks, seeds, seeding, traversal): about a fifth of the bytes. Leave it out for the full reply.
 - k (integer 1 to 1000): Most facts to return.
 - subject (string): The entity name to recall from: exact, or a similar spelling or letter case.
 - user_id (string): Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
+- valid_at (string): Read what was TRUE at this instant (ISO 8601), whatever was known since. With as_of: as known at as_of, true at valid_at.
 
 ### memory_relate (writes)
 
@@ -99,7 +104,7 @@ Parameters:
 - all (boolean): Scope form: true forgets the WHOLE scope named by scope, every entity, fact, document and passage in it, and the scope itself. A scope that never existed is 404; the same call again answers already_forgotten.
 - attribute (object): Attribute form: {"subject": "<exact entity name>", "key": "<attribute key>"}: forgets that one attribute (every value of a multi key); the entity and its other attributes stay.
 - fact (object): Fact form: the one fact to forget, spelled as memory_relate took it. Both entities stay.
-- passage (integerstring): Passage form: the `doc_id` the remember verb returned for the stored document (an integer, or its decimal string).
+- passage (string): Passage form: the `doc_id` the remember verb returned for the stored document, as its decimal STRING, exactly as the reply gave it (an id is a 64-bit integer: as a JSON number above 2^53 it has already lost digits in most clients).
 - reason (string)
 - source (string): Source form: the label the documents were stored under; every document filed under it is forgotten whole. The facts those documents asserted stay.
 - subject (string): Entity form: the exact entity name to forget (a close spelling is suggested in the 404, never forgotten).
@@ -111,9 +116,12 @@ Retrieve what the memory holds that is relevant to a question or a few words, ra
 
 Parameters:
 - query (string, required): A question or a few words; the entity names and type words inside it are what is matched (exact, a close spelling or letter case, one whole word of a longer name, or the start of a word); small English words such as "the" or "of" are not matched on their own.
+- as_of (string): Read the memory as it was KNOWN at this instant (ISO 8601 date or date-time; a bare date is the end of that day UTC): a fact stored after it is not visible. Leave it out for now.
+- compact (boolean): true: each item ONCE (text, kind, the fact's subject / relation / object, doc_id, source, date, score, seed) without the retrieval diagnostics (chunks, seeds, seeding, traversal): about a fifth of the bytes. Leave it out for the full reply.
 - hops (integer 0 to 3): How far to walk from the matched entities (default 2).
 - k (integer 1 to 100): Most facts to return (default 8).
 - user_id (string): Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
+- valid_at (string): Read what was TRUE at this instant (ISO 8601), whatever was known since. With as_of: as known at as_of, true at valid_at.
 
 ### memory_document (writes)
 
@@ -136,7 +144,7 @@ Each route takes a JSON body with the same fields as the tool of the same name, 
     POST /v1/memory/document
     POST /v1/memory/delete_user
 
-Both examples ran against a fresh node on release r11.83.20261013.c03a884, and each answer was read back. They use http://localhost:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
+Both examples ran against a fresh node on release r11.83.20261013.c03a884, and each answer was read back; they have not been re-run on r11.87. They use http://localhost:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
 
     curl -sS http://127.0.0.1:4000/v1/memory/remember \
       -H "Authorization: Bearer $SEMURG_API_TOKEN" \
