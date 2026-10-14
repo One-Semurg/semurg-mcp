@@ -1,0 +1,6 @@
+Semurg MCP setup and agent rules
+Copyright 2026 Semurg
+
+The files in this repository are licensed under the Apache License, Version 2.0 (see LICENSE).
+They call a Semurg node over its public API. The Semurg node software is not part of this repository and is
+licensed separately: https://one.semurg.io/terms
