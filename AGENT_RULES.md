@@ -86,7 +86,7 @@ memory_context, memory_document.
   it when it does; related means they share only some of its words, so use only
   what really answers; nothing_stored means say you do not know.
 - compact. Recommended: send "compact": true on recall and context.
-  Why: the same answer, each item once, in about a quarter of the bytes. Leave
+  Why: the same answer, each item once, in a fraction of the bytes. Leave
   it off only when you need the diagnostics (how each seed was found and the
   walk it took).
 - time. Recommended: when a fact changes, remember the new value with "date"
@@ -105,8 +105,10 @@ memory_context, memory_document.
   longer return it or a fact with it at either end; the recall is how you
   confirm that on your node. A name that matches nothing is refused with 404
   and up to three close names to check. A later remember that names it brings
-  it back. Every passage that mentions it is hidden whole, with whatever else
-  it says; to drop one fact use the fact form, to drop one text the passage form.
+  it back. Every passage LINKED to it is hidden whole, with whatever else it
+  says; a passage that names it without that link stays, and the reply counts
+  it in passages_retained. To drop one fact use the fact form, to drop one text
+  the passage form.
 - ids. Recommended: treat ids as strings and send them back unchanged.
   Why: they are 64-bit numbers, and a JavaScript Number cannot hold one. A
   passage id sent to forget as a JSON number is refused with id_not_string,
