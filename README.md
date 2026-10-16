@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.103.20261016.20638fc. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.104.20261016.a6e6503. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
