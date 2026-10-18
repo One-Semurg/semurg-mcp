@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.113.20261018.7b20c81. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.114.20261018.b4a044a. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -79,7 +79,7 @@ Recall what is stored about ONE entity: finds the entity named `subject` by its 
 Parameters:
 - as_of (string): Read the memory as it was KNOWN at this instant (ISO 8601 date or date-time; a bare date is the end of that day UTC): a fact stored after it is not visible. Leave it out for now.
 - attribute (object): Find entities BY an attribute's current value, instead of by name: {"key": "ndis_number", "value": "430000001"} (optionally "type"). Only this scope is searched, the end user's own when user_id is set. Send it instead of subject.
-- compact (boolean): true: each item ONCE (text, kind, the fact's subject / relation / object, doc_id, source, date, score, seed) without the retrieval diagnostics (chunks, seeds, seeding, traversal): a fraction of the bytes. Leave it out for the full reply.
+- compact (boolean): true: each item ONCE (text, kind, the fact's subject / relation / object, an entity's attributes as name: value, doc_id, source, date, score, seed) without the retrieval diagnostics (chunks, seeds, seeding, traversal): a fraction of the bytes. Leave it out for the full reply.
 - k (integer 1 to 1000): Most facts to return.
 - subject (string): The entity name to recall from: exact, or a similar spelling or letter case.
 - user_id (string): Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
@@ -117,7 +117,7 @@ Retrieve what the memory holds that is relevant to a question or a few words, ra
 Parameters:
 - query (string, required): A question or a few words; the entity names and type words inside it are what is matched (exact, a close spelling or letter case, one whole word of a longer name, or the start of a word); small English words such as "the" or "of" are not matched on their own.
 - as_of (string): Read the memory as it was KNOWN at this instant (ISO 8601 date or date-time; a bare date is the end of that day UTC): a fact stored after it is not visible. Leave it out for now.
-- compact (boolean): true: each item ONCE (text, kind, the fact's subject / relation / object, doc_id, source, date, score, seed) without the retrieval diagnostics (chunks, seeds, seeding, traversal): a fraction of the bytes. Leave it out for the full reply.
+- compact (boolean): true: each item ONCE (text, kind, the fact's subject / relation / object, an entity's attributes as name: value, doc_id, source, date, score, seed) without the retrieval diagnostics (chunks, seeds, seeding, traversal): a fraction of the bytes. Leave it out for the full reply.
 - hops (integer 0 to 3): How far to walk from the matched entities (default 2).
 - k (integer 1 to 100): Most facts to return (default 8).
 - user_id (string): Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
@@ -213,7 +213,9 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 - https://one.semurg.io/models: Open language and retrieval models, each with the speed one user sees and the total across many users, generated from the release record.
 - https://one.semurg.io/scale: Start on a free first node with no time limit, then licence more nodes for capacity. A node is a node: the licence does not change with its cores, memory or disks.
 - https://one.semurg.io/performance: Write, read, traverse and scan, measured on the whole cluster at every release, with the machine, the door, the concurrency, the utilisation and where the data was served from behind each figure, and its trend across releases.
-- https://one.semurg.io/benchmark: Re-measuring every domain on new hardware, in RAM and bigger than RAM together; results land domain by domain. Each result will name the release and the machine it was measured on.
+- https://one.semurg.io/benchmark: Graph measured on Semurg r11.108 against Neo4j, FalkorDB, FalkorDBLite, ArcadeDB and SurrealDB: the same question, the same answer and the same machine, with every loss shown beside the wins.
+- https://one.semurg.io/durability: What happens to your data when a Semurg node is killed, its disk fills or slows, or the power is cut: measured on published releases, with results pending where a test has not run yet.
+- https://one.semurg.io/cloud: Semurg Cloud will rent you a dedicated server with Semurg already installed: one customer per machine, your SSH key the only login, updates from the Marketplace. Coming soon.
 - https://one.semurg.io/pricing: A flat licence per node: bought once for the life of that hardware, or annually at the lifetime price spread over a five-year working life. The first node is free, forever. Support is optional at 20% of the lifetime list price per year, and updates are free from the Marketplace.
 - https://one.semurg.io/consulting: We build an organisation's enterprise in a box on Semurg: its databases, object stores and documents synced into one knowledge graph with an ontology, and persistent agents working on it, on your own hardware. Priced on request; the node licences are bought separately.
 - https://one.semurg.io/install: Download the installer, check it against the published checksums, and run a node on your own machine. The first node is free, forever. No account, no upload, no call home.
