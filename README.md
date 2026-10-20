@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.118.20261019.dceaf6f. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.119.20261020.97e4ba6. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -154,7 +154,7 @@ Each route takes a JSON body with the same fields as the tool of the same name, 
     POST /v1/memory/document
     POST /v1/memory/delete_user
 
-Both examples ran against a fresh node on release r11.83.20261013.c03a884, and each answer was read back; they have not been re-run on r11.101. They use http://localhost:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
+Both examples ran against a fresh node on release r11.83.20261013.c03a884, and each answer was read back; they have not been re-run on r11.101. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
 
     curl -sS http://127.0.0.1:4000/v1/memory/remember \
       -H "Authorization: Bearer $SEMURG_API_TOKEN" \
