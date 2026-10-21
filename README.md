@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.120.20261020.d401365. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.121.20261021.3619d35. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -190,9 +190,19 @@ Download it and check it against the release's own checksums:
 
 ## Packages: what exists
 
-Everything Semurg publishes comes from one.semurg.io: the installer (https://one.semurg.io/install, the bundle https://one.semurg.io/dl/semurg-r11-installer.tar.gz, checked against https://one.semurg.io/dl/SHA256SUMS) and the clients archive above. The MCP server is built into the node (POST /v1/mcp above): there is nothing to install for it.
+Semurg publishes from one.semurg.io (the installer https://one.semurg.io/install, the bundle https://one.semurg.io/dl/semurg-r11-installer.tar.gz, checked against https://one.semurg.io/dl/SHA256SUMS, and the clients archive above) and on the public registries named below, and nowhere else. The MCP server is built into the node (POST /v1/mcp above): there is nothing to install for it.
 
-Semurg publishes no package on PyPI, npm, crates.io, NuGet, Hex, Maven Central, the Go module proxy, the Julia General registry, opam and the MCP registry today. A package on these registries that claims to be Semurg's is not ours: do not install it.
+Published on public registries:
+
+PyPI:
+
+    pip install semurg==0.1.0
+
+one.semurg.io (container image):
+
+    docker pull one.semurg.io/semurg:latest
+
+Semurg publishes no package on npm, crates.io, NuGet, Hex, Maven Central, the Go module proxy, the Julia General registry, opam and the MCP registry today. A package on these registries that claims to be Semurg's is not ours: do not install it.
 
 ## Building an app on a node
 
@@ -213,7 +223,7 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 - https://one.semurg.io/models: Open language and retrieval models, each with the speed one user sees and the total across many users, generated from the release record.
 - https://one.semurg.io/scale: Start on a free first node with no time limit, then licence more nodes for capacity. A node is a node: the licence does not change with its cores, memory or disks.
 - https://one.semurg.io/performance: Write, read, traverse and scan, measured on the whole cluster at every release, with the machine, the door, the concurrency, the utilisation and where the data was served from behind each figure, and its trend across releases.
-- https://one.semurg.io/benchmark: Graph measured on Semurg r11.108 against Neo4j, FalkorDB, FalkorDBLite, ArcadeDB and SurrealDB: the same question, the same answer and the same machine, with every loss shown beside the wins.
+- https://one.semurg.io/benchmark: Graph measured on Semurg r11.118 against Neo4j, ArangoDB, FalkorDB, ArcadeDB and SurrealDB: the same question, the same answer and the same machine, with every loss shown beside the wins.
 - https://one.semurg.io/durability: What happens to your data when a Semurg node is killed, its disk fills or slows, or the power is cut: measured on published releases, with results pending where a test has not run yet.
 - https://one.semurg.io/cloud: Semurg Cloud will rent you a dedicated server with Semurg already installed: one customer per machine, your SSH key the only login, updates from the Marketplace. Coming soon.
 - https://one.semurg.io/pricing: A flat licence per node: bought once for the life of that hardware, or annually at the lifetime price spread over a five-year working life. The first node is free, forever. Support is optional at 20% of the lifetime list price per year, and updates are free from the Marketplace.
