@@ -1,11 +1,11 @@
-<!-- Generated from the Semurg source of release r11.121.20261021.3619d35. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.122.20261023.8b8ea3f. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
 
 ## Install a node
 
-Before you install: Semurg runs on Intel and AMD x86_64 processors with AVX2 or newer, on Linux directly, or on Windows through WSL2 or Docker. There is no Mac or ARM build yet (a Mac version is coming); on a Mac, run the node on a Linux machine you can reach. The installer needs root.
+Before you install: Semurg runs on Intel and AMD x86_64 processors with AVX2 or newer, with 2 CPU threads and 4 GB of memory or more: on Ubuntu 24.04 with the installer, and on any other x86_64 Linux in Docker (the installer stops on another system and prints the docker run line that works there). There is no Mac, Windows or ARM build yet (they are coming, built from the same release); from a Mac or Windows machine, run the node on a Linux machine you can reach. Docker Desktop on Mac and Windows is being tested. The installer needs root.
 
 One command, on a Linux machine you control. The first line shows the script without running it.
 
@@ -196,7 +196,7 @@ Published on public registries:
 
 PyPI:
 
-    pip install semurg==0.1.0
+    pip install semurg==0.1.1
 
 one.semurg.io (container image):
 
@@ -215,7 +215,7 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 
 ## Pages
 
-- https://one.semurg.io/: Semurg is the memory layer for AI agents and agent frameworks: one shared memory over MCP or plain HTTP that outlives the session, with a knowledge graph, vector search and graph RAG built in, bigger than RAM, on your own hardware. One engine, written from scratch, for ten data domains, each measured in the open. The first node is free, forever.
+- https://one.semurg.io/: Semurg is the memory layer for AI agents and agent frameworks: one shared memory over MCP or plain HTTP that outlives the session, with a knowledge graph, vector search and graph RAG built in, bigger than RAM, on your own hardware. One engine, written from scratch, for ten data domains, measured in the open domain by domain. The first node is free, forever.
 - https://one.semurg.io/agents: A shared memory for AI agents: remember, recall, relate and forget facts and relationships through MCP or plain HTTP, in the same store that serves your graph, vector and retrieval work.
 - https://one.semurg.io/develop: Build vector and graph RAG on one engine: vectors and graph on one copy of your data, relationships written as you write the data, and no new query language to learn.
 - https://one.semurg.io/commands: Every command Semurg tells you or your coding agent to run, read from the source and run against each published release. This file, as a page.
