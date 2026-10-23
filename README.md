@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.122.20261023.8b8ea3f. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.123.20261023.b589bad. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -30,7 +30,7 @@ Claude Code: one user-scope entry, written by Claude Code's own command. Run it 
 
 Connected on release r11.101.20261016.3097008: Claude Code's own client listed every memory tool that release served.
 
-Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04) or with the Docker image; otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
+Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04) (Docker Desktop on Windows is being tested); otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
 
     {
       "mcpServers": {
@@ -94,6 +94,7 @@ Parameters:
 - to (string, required)
 - type (string, required): The relationship, for example WORKS_AT.
 - attributes (object): Typed attributes of THIS relationship, stored on it (role, frequency, valid_from / valid_to as ISO dates), by the same rules as an entity's attributes: {"role": "guardian_nominee", "valid_from": "2026-03-01"}.
+- replaces (boolean): true: this relationship REPLACES the subject's other stored targets of the same type (works_at, owned_by, reports_to, lives_in): they end at this call's date (or now) and stay readable with valid_at / as_of before it; stating an old one again later brings it back. The reply's `replaces` lists what ended (`ended`), what came back (`restored`), a relationship older than a stored one (`older_than_stored`: it is kept in history, ended where the newer one starts) and any subject with too many links to read whole (`unread`, state could_not_judge). Leave it out for a relationship that adds to the others (knows, visited).
 - user_id (string): Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
 
 ### memory_forget (writes)
@@ -132,6 +133,23 @@ Parameters:
 - name (string): The document's name, stored as its provenance label (optional).
 - user_id (string): Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
 
+### memory_export (read-only)
+
+Export EVERYTHING a scope holds, one page per call: send `cursor` from the previous reply's `next` until `next` is null. Each record is a JSON object (write one per line for a .jsonl file): `entity` (name, types, current attributes with valid_from), `fact` (subject, relation, object, both ends' types, the relationship's attributes, its sources with dates, and `state` current or ended with `ended_at` and `replaced_by`), `document` (each stored text ONCE, its live passages in order, with its date and source label; a forgotten passage is never exported), and an `export` header on the first page. memory_import takes these records back into any scope. Read-only. `limit` = catalogue entries walked per page (default 256, at most 1024).
+
+Parameters:
+- cursor (string): The previous page's `next`, unchanged; leave it out for the first page.
+- limit (integer 1 to 1024): Catalogue entries walked in this page (default 256).
+- user_id (string): Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
+
+### memory_import (writes)
+
+Store the records memory_export produced (any page, in any order; a page sent twice stores nothing twice) into a scope, through the same writes remember makes: documents as their text with date and source label, entities with their types and attributes, facts with their dated sources, and an ended fact ended again at its ended_at, so history reads as it did. The reply counts what was imported, names every record it skipped (`skipped`: index and why) and lists what an import does not reproduce (`not_reproduced`). At most 4096 records a call.
+
+Parameters:
+- records (array, required): Records exactly as memory_export returned them.
+- user_id (string): Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
+
 ### comms_bind_address (writes)
 
 Bind an address `name@<cluster domain>` to YOU (your token's identity, or the end user you name with `user_id`), so humans and agents on this cluster can message you by name. Humans and agents bind through the identical call; `kind` says which you are (`user`, the default, or `agent`). Idempotent: binding the same address again answers `bound: "already"`. Refused by name: `address_invalid` (ASCII letters, digits, `.`, `-`, `_`, `+` only, exactly one `@`), `domain_not_ours` (the cluster's domains are listed in the fix), `address_taken` (bound to someone else), `kind_invalid`. A write: it needs an API token.
@@ -153,6 +171,9 @@ Each route takes a JSON body with the same fields as the tool of the same name, 
     POST /v1/memory/context
     POST /v1/memory/document
     POST /v1/memory/delete_user
+    POST /v1/memory/export
+    POST /v1/memory/import
+    POST /v1/memory/audit
 
 Both examples ran against a fresh node on release r11.83.20261013.c03a884, and each answer was read back; they have not been re-run on r11.101. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
 
@@ -223,7 +244,7 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 - https://one.semurg.io/models: Open language and retrieval models, each with the speed one user sees and the total across many users, generated from the release record.
 - https://one.semurg.io/scale: Start on a free first node with no time limit, then licence more nodes for capacity. A node is a node: the licence does not change with its cores, memory or disks.
 - https://one.semurg.io/performance: Write, read, traverse and scan, measured on the whole cluster at every release, with the machine, the door, the concurrency, the utilisation and where the data was served from behind each figure, and its trend across releases.
-- https://one.semurg.io/benchmark: Graph measured on Semurg r11.118 against Neo4j, ArangoDB, FalkorDB, ArcadeDB and SurrealDB: the same question, the same answer and the same machine, with every loss shown beside the wins.
+- https://one.semurg.io/benchmark: Graph, document and vector + graph RAG measured on Semurg r11.118 to r11.121 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine, with every loss shown beside the wins.
 - https://one.semurg.io/durability: What happens to your data when a Semurg node is killed, its disk fills or slows, or the power is cut: measured on published releases, with results pending where a test has not run yet.
 - https://one.semurg.io/cloud: Semurg Cloud will rent you a dedicated server with Semurg already installed: one customer per machine, your SSH key the only login, updates from the Marketplace. Coming soon.
 - https://one.semurg.io/pricing: A flat licence per node: bought once for the life of that hardware, or annually at the lifetime price spread over a five-year working life. The first node is free, forever. Support is optional at 20% of the lifetime list price per year, and updates are free from the Marketplace.
