@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.125.20261024.2c9a901. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.126.20261025.70c5311. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -242,9 +242,9 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 - https://one.semurg.io/commands: Every command Semurg tells you or your coding agent to run, read from the source and run against each published release. This file, as a page.
 - https://one.semurg.io/blog: The Semurg blog: announcements, how-to guides for agents and developers, engineering deep dives and thought leadership, every number linked to its record.
 - https://one.semurg.io/models: Open language and retrieval models, each with the speed one user sees and the total across many users, generated from the release record.
-- https://one.semurg.io/scale: Start on a free first node with no time limit, then licence more nodes for capacity. A node is a node: the licence does not change with its cores, memory or disks.
+- https://one.semurg.io/clusters: A Semurg cluster runs one engine across several machines: data and work spread over every disk and core of every node. Start on a free first node, add licensed nodes as your data grows.
 - https://one.semurg.io/performance: Write, read, traverse and scan, measured on the whole cluster at every release, with the machine, the door, the concurrency, the utilisation and where the data was served from behind each figure, and its trend across releases.
-- https://one.semurg.io/benchmark: Graph, vector, time-series, document, search and vector + graph RAG measured on Semurg r11.118 to r11.123 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine, with every loss shown beside the wins.
+- https://one.semurg.io/benchmark: Graph, vector, columnar, key-value, time-series, document, search, vector + graph RAG and knowledge graph measured on Semurg r11.118 to r11.125 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine, with every loss shown beside the wins.
 - https://one.semurg.io/durability: What happens to your data when a Semurg node is killed, its disk fills or slows, or the power is cut: measured on published releases, with results pending where a test has not run yet.
 - https://one.semurg.io/cloud: Semurg Cloud will rent you a dedicated server with Semurg already installed: one customer per machine, your SSH key the only login, updates from the Marketplace. Coming soon.
 - https://one.semurg.io/pricing: A flat licence per node: bought once for the life of that hardware, or annually at the lifetime price spread over a five-year working life. The first node is free, forever. Support is optional at 20% of the lifetime list price per year, and updates are free from the Marketplace.
