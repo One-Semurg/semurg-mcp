@@ -1,11 +1,11 @@
-<!-- Generated from the Semurg source of release r11.127.20261026.f8fafdc. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.128.20261026.4964735. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
 
 ## Install a node
 
-Before you install: Semurg runs on Intel and AMD x86_64 processors with AVX2 or newer, with 2 CPU threads and 4 GB of memory or more: on Ubuntu 24.04 with the installer, and on any other x86_64 Linux in Docker (the installer stops on another system and prints the docker run line that works there). There is no Mac, Windows or ARM build yet (they are coming, built from the same release); from a Mac or Windows machine, run the node on a Linux machine you can reach. Docker Desktop on Mac and Windows is being tested. The installer needs root.
+Before you install: Semurg runs on Intel and AMD x86_64 processors with AVX2 or newer, with 2 CPU threads and 4 GB of memory or more: on Ubuntu 24.04 with the installer, and on any other x86_64 Linux in Docker (the installer stops on another system and prints the docker run line that works there). There is no Mac, Windows or ARM build yet (they are coming, built from the same release); from a Mac or Windows machine, run the node on a Linux machine you can reach. WSL2 and Docker Desktop on Windows are being tested. The installer needs root.
 
 One command, on a Linux machine you control. The first line shows the script without running it.
 
@@ -28,9 +28,9 @@ Claude Code: one user-scope entry, written by Claude Code's own command. Run it 
     claude mcp add-json --scope user semurg '{"type":"http","url":"http://127.0.0.1:4000/v1/mcp","headers":{"Authorization":"Bearer ${SEMURG_API_TOKEN}","X-Semurg-Scope":"default"}}'
     # Claude Code reads the token from the SEMURG_API_TOKEN environment variable when it starts
 
-Connected on release r11.126.20261025.70c5311: Claude Code's own client listed every memory tool that release served.
+Results pending.
 
-Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04) (Docker Desktop on Windows is being tested); otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
+Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04), which is being tested, as is Docker Desktop on Windows; otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
 
     {
       "mcpServers": {
@@ -213,7 +213,7 @@ Each route takes a JSON body with the same fields as the tool of the same name, 
     POST /v1/memory/import
     POST /v1/memory/audit
 
-Both examples ran against a fresh node on release r11.126.20261025.70c5311, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
+Both examples ran against a fresh node on release r11.127.20261026.f8fafdc, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
 
     curl -sS http://127.0.0.1:4000/v1/memory/remember \
       -H "Authorization: Bearer $SEMURG_API_TOKEN" \
@@ -261,7 +261,11 @@ one.semurg.io (container image):
 
     docker pull one.semurg.io/semurg:latest
 
-Semurg publishes no package on npm, crates.io, NuGet, Hex, Maven Central, the Go module proxy, the Julia General registry, opam and the MCP registry today. A package on these registries that claims to be Semurg's is not ours: do not install it.
+the Official MCP Registry:
+
+    curl -s "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.semurg/agent-memory"
+
+Semurg publishes no package on npm, crates.io, NuGet, Hex, Maven Central, the Go module proxy, the Julia General registry and opam today. A package on these registries that claims to be Semurg's is not ours: do not install it.
 
 ## Building an app on a node
 
@@ -282,7 +286,7 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 - https://one.semurg.io/models: Open language and retrieval models, each with the speed one user sees and the total across many users, generated from the release record.
 - https://one.semurg.io/clusters: A Semurg cluster runs one engine across several machines: data and work spread over every disk and core of every node. Start on a free first node, add licensed nodes as your data grows.
 - https://one.semurg.io/performance: Write, read, traverse and scan, measured on the whole cluster at every release, with the machine, the door, the concurrency, the utilisation and where the data was served from behind each figure, and its trend across releases.
-- https://one.semurg.io/benchmark: Graph, vector, columnar, key-value, time-series, object, document, search, streaming, vector + graph RAG and knowledge graph measured on Semurg r11.118 to r11.126 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine, with every loss shown beside the wins.
+- https://one.semurg.io/benchmark: Graph, vector, columnar, key-value, time-series, object, document, search, streaming, vector + graph RAG and knowledge graph measured on Semurg r11.118 to r11.127 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine.
 - https://one.semurg.io/durability: What happens to your data when a Semurg node is killed, its disk fills or slows, or the power is cut: measured on published releases, with results pending where a test has not run yet.
 - https://one.semurg.io/cloud: Semurg Cloud will rent you a dedicated server with Semurg already installed: one customer per machine, your SSH key the only login, updates from the Marketplace. Coming soon.
 - https://one.semurg.io/pricing: A flat licence per node: bought once for the life of that hardware, or annually at the lifetime price spread over a five-year working life. The first node is free, forever. Support is optional at 20% of the lifetime list price per year, and updates are free from the Marketplace.
