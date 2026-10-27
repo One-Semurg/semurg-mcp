@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.130.20261026.cf29851. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.131.20261027.1c0ba4a. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -12,7 +12,7 @@ One command, on a Linux machine you control. The first line shows the script wit
     curl -fsSL https://one.semurg.io/install | less
     curl -fsSL https://one.semurg.io/install | sudo bash
 
-The installer ends with a SUCCESS banner that prints the node's API token. The data directory must sit on a local ext4 or xfs filesystem; the installer checks this and stops if it does not. One node needs no licence key.
+The installer ends with a SUCCESS banner that says where the node's API token is stored and the one command that reads it; the token itself is never printed, so it stays out of terminal logs and agent transcripts. The data directory must sit on a local ext4 or xfs filesystem; the installer checks this and stops if it does not. One node needs no licence key.
 
 Put the token in your shell, then prove the gate is on (401 without the token, 200 with it):
 
@@ -24,11 +24,11 @@ Put the token in your shell, then prove the gate is on (401 without the token, 2
 
 Claude Code: one user-scope entry, written by Claude Code's own command. Run it in the shell that starts Claude Code; the entry holds only a reference to the variable, never the token itself. The address is the one a fresh node serves; behind your own TLS proxy use its https address.
 
-    export SEMURG_API_TOKEN=<the API token your node printed at install>
+    export SEMURG_API_TOKEN=<the API token stored on your node>
     claude mcp add-json --scope user semurg '{"type":"http","url":"http://127.0.0.1:4000/v1/mcp","headers":{"Authorization":"Bearer ${SEMURG_API_TOKEN}","X-Semurg-Scope":"default"}}'
     # Claude Code reads the token from the SEMURG_API_TOKEN environment variable when it starts
 
-Results pending.
+Connected on release r11.130.20261026.cf29851: Claude Code's own client listed every memory tool that release served.
 
 Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04), which is being tested, as is Docker Desktop on Windows; otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
 
@@ -213,7 +213,7 @@ Each route takes a JSON body with the same fields as the tool of the same name, 
     POST /v1/memory/import
     POST /v1/memory/audit
 
-Both examples ran against a fresh node on release r11.127.20261026.f8fafdc, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
+Both examples ran against a fresh node on release r11.130.20261026.cf29851, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
 
     curl -sS http://127.0.0.1:4000/v1/memory/remember \
       -H "Authorization: Bearer $SEMURG_API_TOKEN" \
