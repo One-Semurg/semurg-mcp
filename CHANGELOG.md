@@ -1,10 +1,22 @@
 # Changelog
 
 What changed in each Semurg release, in plain words. A release is named `r11.SEQ.DATE.COMMIT`, for example
-`r11.133.20261027.8a8b1f3`. The newest is always named at https://one.semurg.io/dl/LATEST.json, and every download can be
+`r11.134.20261027.a9b1536`. The newest is always named at https://one.semurg.io/dl/LATEST.json, and every download can be
 checked against https://one.semurg.io/dl/SHA256SUMS. Each release is installed fresh and upgraded in a clean room before it
 publishes; the agent integrations (OpenClaw, Claude Code and eleven library frameworks) are re-tested on a fresh install of
 each published release, and https://one.semurg.io/agents shows the newest run.
+
+## r11.134.20261027.a9b1536 (27 October 2026)
+
+- `semurg uninstall` on a machine where the node was started without systemd (in a container, for example) now stops the
+  node, and checks that it has stopped, before it removes anything. Before, the files were removed while the node kept
+  running and answering.
+- The installer download now holds only the files an install uses; two build scripts that had been included no longer ship.
+- Memory: looking up an entity by its name now answers only from the scope it was asked in. No tool or API route used the
+  old lookup, which could match a name stored in another scope, so no answer a client received changes.
+- New post: what a design partner found in a day of real use, and what we changed
+  (https://one.semurg.io/blog/what-a-design-partner-found). Three of the fixes were checked on the published r11.133; the
+  Gemma fix is named as not yet checked.
 
 ## r11.133.20261027.8a8b1f3 (27 October 2026)
 
