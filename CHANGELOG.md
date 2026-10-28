@@ -1,10 +1,20 @@
 # Changelog
 
 What changed in each Semurg release, in plain words. A release is named `r11.SEQ.DATE.COMMIT`, for example
-`r11.134.20261027.a9b1536`. The newest is always named at https://one.semurg.io/dl/LATEST.json, and every download can be
+`r11.135.20261028.2ff2348`. The newest is always named at https://one.semurg.io/dl/LATEST.json, and every download can be
 checked against https://one.semurg.io/dl/SHA256SUMS. Each release is installed fresh and upgraded in a clean room before it
 publishes; the agent integrations (OpenClaw, Claude Code and eleven library frameworks) are re-tested on a fresh install of
 each published release, and https://one.semurg.io/agents shows the newest run.
+
+## r11.135.20261028.2ff2348 (28 October 2026)
+
+- MongoDB: copying data out of Semurg into an empty MongoDB now recreates the source's validator options and every secondary
+  index, so a database copied from one MongoDB through Semurg into another matches on its catalogue as well as its documents.
+- Installer: a machine without `find`, or whose util-linux lacks `findmnt` and `lsblk`, gets those base tools installed before
+  the install reads anything.
+- Security: an OAuth client registration is held for 24 hours (with a cap on how many are held) until a person grants it, and
+  is kept only once granted. A tenant's token now gets the coarse cluster view an anonymous caller gets; the full cluster view
+  is the owner's. The marketplace feed now verifies the server's TLS certificate and host name.
 
 ## r11.134.20261027.a9b1536 (27 October 2026)
 
@@ -33,8 +43,7 @@ each published release, and https://one.semurg.io/agents shows the newest run.
   outdated copy.
 - The website's pages now say what the published results and this release say.
 - New post: Semurg installs on six Linux distributions (Ubuntu, Debian, Rocky, Alma, Fedora and Arch), each checked by a
-  real install of the published installer; Amazon Linux and openSUSE are named as not yet checked
-  (https://one.semurg.io/blog).
+  real install of the published installer (https://one.semurg.io/blog).
 - The agent integrations passed again on a fresh install of r11.132.
 
 ## r11.132.20261027.a274a28 (27 October 2026)
