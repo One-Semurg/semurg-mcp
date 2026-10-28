@@ -14,9 +14,6 @@ each published release, and https://one.semurg.io/agents shows the newest run.
 - The installer download now holds only the files an install uses; two build scripts that had been included no longer ship.
 - Memory: looking up an entity by its name now answers only from the scope it was asked in. No tool or API route used the
   old lookup, which could match a name stored in another scope, so no answer a client received changes.
-- New post: what a design partner found in a day of real use, and what we changed
-  (https://one.semurg.io/blog/what-a-design-partner-found). Three of the fixes were checked on the published r11.133; the
-  Gemma fix is named as not yet checked.
 
 ## r11.133.20261027.8a8b1f3 (27 October 2026)
 
