@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.135.20261028.2ff2348. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.136.20261028.dfbe08e. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -28,7 +28,7 @@ Claude Code: one user-scope entry, written by Claude Code's own command. Run it 
     claude mcp add-json --scope user semurg '{"type":"http","url":"http://127.0.0.1:4000/v1/mcp","headers":{"Authorization":"Bearer ${SEMURG_API_TOKEN}","X-Semurg-Scope":"default"}}'
     # Claude Code reads the token from the SEMURG_API_TOKEN environment variable when it starts
 
-Connected on release r11.130.20261026.cf29851: Claude Code's own client listed every memory tool that release served.
+Connected on release r11.132.20261027.a274a28: Claude Code's own client listed every memory tool that release served.
 
 Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04), which is being tested, as is Docker Desktop on Windows; otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
 
@@ -197,6 +197,17 @@ Parameters:
 - message_id (string, required): The message id (a decimal string).
 - user_id (string): Optional END USER inside your key (one app, many end users): the call is then that end user's. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused.
 
+## One app, many end users
+
+Every memory tool and route takes an optional `user_id`: Optional END USER inside your key (one app, many end users): every scope you name is then that end user's own, and two end users never meet. App-level separation, as mem0's user_id; a per-user token stays the security boundary. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused. No ':', at most 256 bytes.
+
+An app removes one end user with POST /v1/memory/delete_user and the body {"user_id": "<id>"}: everything that end user stored under your key, in every scope, is gone. Four claims, each printed only while the test or the rule that proves it is in the tree:
+
+- A connection pinned with X-Semurg-User to one end user never reads, writes or deletes another end user's memory, and a call on it that names a different user_id is refused.
+- Deleting an end user removes everything that end user stored, on every plane, and leaves every other end user byte-identical; a second delete answers already_deleted, an unknown id 404, a missing user_id 422, and the public sandbox is refused.
+- One key deletes only its own end users: another key's end user of the same name is byte-identical after.
+- No MCP tool deletes an end user: the delete is an app's or a person's call over HTTP, the socket, the binary wire or a client, so an injected tool call cannot reach it.
+
 ## The same verbs over HTTP
 
 Each route takes a JSON body with the same fields as the tool of the same name, and the header `Authorization: Bearer <token>`.
@@ -213,7 +224,7 @@ Each route takes a JSON body with the same fields as the tool of the same name, 
     POST /v1/memory/import
     POST /v1/memory/audit
 
-Both examples ran against a fresh node on release r11.130.20261026.cf29851, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
+Both examples ran against a fresh node on release r11.132.20261027.a274a28, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
 
     curl -sS http://127.0.0.1:4000/v1/memory/remember \
       -H "Authorization: Bearer $SEMURG_API_TOKEN" \
@@ -229,17 +240,17 @@ Both examples ran against a fresh node on release r11.130.20261026.cf29851, and 
 
 Eleven languages in one archive, https://one.semurg.io/dl/clients.tar.gz, with CONNECTING.md, the guide to pointing a client at your node. A client takes the base URL of your node and its token. The memory calls each client defines, in its own spelling:
 
-- Python (clients/python/semurg/client.py): memory_status, remember, recall, relate, forget, context
-- Go (clients/go/semurg/client.go): MemoryStatus, Remember, Recall, Relate, Forget, Context
-- Java (clients/java/src/main/java/io/semurg/client/SemurgClient.java): memoryStatus, remember, recall, relate, forget, context
-- C# (clients/csharp/Semurg.Client/SemurgClient.cs): MemoryStatus, Remember, Recall, Relate, Forget, Context
-- F# (clients/fsharp/Semurg.Client.FSharp/Client.fs): memoryStatus, remember, recall, relate, forget, context
-- Elixir (clients/elixir/lib/semurg/client.ex): memory_status, remember, recall, relate, forget, context
-- Erlang (clients/erlang/src/semurg_client.erl): memory_status, remember, recall, relate, forget, context
-- Rust (clients/rust/src/client.rs): memory_status, remember, recall, relate, forget, memory_context
+- Python (clients/python/semurg/client.py): memory_status, remember, recall, relate, forget, context, delete_user
+- Go (clients/go/semurg/client.go): MemoryStatus, Remember, Recall, Relate, Forget, Context, DeleteUser
+- Java (clients/java/src/main/java/io/semurg/client/SemurgClient.java): memoryStatus, remember, recall, relate, forget, context, deleteUser
+- C# (clients/csharp/Semurg.Client/SemurgClient.cs): MemoryStatus, Remember, Recall, Relate, Forget, Context, DeleteUser
+- F# (clients/fsharp/Semurg.Client.FSharp/Client.fs): memoryStatus, remember, recall, relate, forget, context, deleteUser
+- Elixir (clients/elixir/lib/semurg/client.ex): memory_status, remember, recall, relate, forget, context, delete_user
+- Erlang (clients/erlang/src/semurg_client.erl): memory_status, remember, recall, relate, forget, context, delete_user
+- Rust (clients/rust/src/client.rs): memory_status, remember, recall, relate, forget, memory_context, delete_user
 - Julia (clients/julia/src/client.jl): remember, recall, context
 - C++: no memory calls in this client yet; it reaches them over HTTP (checked in clients/cpp/src/client.cpp)
-- OCaml (clients/ocaml/lib/client.ml): memory_status, remember, recall, relate, forget, context
+- OCaml (clients/ocaml/lib/client.ml): memory_status, remember, recall, relate, forget, context, delete_user
 
 Download it and check it against the release's own checksums:
 
@@ -288,7 +299,7 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 - https://one.semurg.io/performance: Write, read, traverse and scan, measured on the whole cluster at every release, with the machine, the door, the concurrency, the utilisation and where the data was served from behind each figure, and its trend across releases.
 - https://one.semurg.io/benchmark: Graph, vector, columnar, key-value, time-series, object, document, search, streaming, vector + graph RAG and knowledge graph measured on Semurg r11.118 to r11.127 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine.
 - https://one.semurg.io/durability: What happens to your data when a Semurg node is killed, its disk fills or slows, or the power is cut: measured on published releases, with results pending where a test has not run yet.
-- https://one.semurg.io/cloud: Semurg Cloud will rent you a dedicated server with Semurg already installed: one customer per machine, your SSH key the only login, updates from the Marketplace. Coming soon.
+- https://one.semurg.io/cloud: Rent a dedicated server with Semurg installed: choose the size and region, pay for 30 days, and within minutes Semurg is serving on it with Claude Code connected if you choose. Your SSH key is the only way in.
 - https://one.semurg.io/pricing: A flat licence per node: bought once for the life of that hardware, or annually at the lifetime price spread over a five-year working life. The first node is free, forever. Support is optional at 20% of the lifetime list price per year, and updates are free from the Marketplace.
 - https://one.semurg.io/consulting: We build an organisation's enterprise in a box on Semurg: its databases, object stores and documents synced into one knowledge graph with an ontology, and persistent agents working on it, on your own hardware. Priced on request; the node licences are bought separately.
 - https://one.semurg.io/install: Download the installer, check it against the published checksums, and run a node on your own machine. The first node is free, forever. No account, no upload, no call home.
