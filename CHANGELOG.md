@@ -1,10 +1,34 @@
 # Changelog
 
 What changed in each Semurg release, in plain words. A release is named `r11.SEQ.DATE.COMMIT`, for example
-`r11.135.20261028.2ff2348`. The newest is always named at https://one.semurg.io/dl/LATEST.json, and every download can be
+`r11.136.20261028.dfbe08e`. The newest is always named at https://one.semurg.io/dl/LATEST.json, and every download can be
 checked against https://one.semurg.io/dl/SHA256SUMS. Each release is installed fresh and upgraded in a clean room before it
 publishes; the agent integrations (OpenClaw, Claude Code and eleven library frameworks) are re-tested on a fresh install of
 each published release, and https://one.semurg.io/agents shows the newest run.
+
+## r11.136.20261028.dfbe08e (28 October 2026)
+
+- Memory: a relation named like one the node uses for itself (`MENTIONS` or `IS_A`, for example) can now be forgotten with the
+  same spelling it was stored with.
+- Memory: the first search by meaning after a node starts is no longer the slow one: the node warms the embedding model in the
+  background as soon as the model is installed.
+- Memory: while a new node is still downloading its models, `memory_status` says they are installing, with progress, instead of
+  saying that no model is installed; it also reports the background extractor's state in a `model_extraction` object.
+- Memory: an entity that a fact gives a type, and that a stored passage also names, keeps that type; the placeholder type
+  `concept` no longer replaces it.
+- Clients: every client that makes memory calls (Python, TypeScript, Go, Rust, Elixir, Erlang, Julia, C#, Java, F# and OCaml)
+  can be pinned to one end user with a single constructor option. A pinned client sends the `X-Semurg-User` header on every
+  request, and the node refuses any call that names a different user.
+- Objects: reading a range of a large object costs about the size of the range, not of the whole object; large objects can be
+  uploaded as a stream; a REST route serves an object as a file (Range requests, an ETag that is the content's SHA-256, its
+  content type and file name); identical bytes stored twice are kept once.
+- Relational: rows can be deleted by key in one call, on the REST API, WebSocket, the binary protocol and the Elixir and Rust
+  SDKs; each row answers `deleted`, `absent` or `could_not_judge`.
+- PostgreSQL wire protocol: `CREATE TABLE` creates the table. Two sessions creating the same name at once leave one table, and
+  the second gets error 42P07.
+- Binary protocol: a missing record now answers `not_found` (code 9) instead of `bad_request`, so a caller can tell a missing
+  record from a malformed call.
+- Node licences can be bought on the website, https://one.semurg.io/buy, and each node then fetches its own key.
 
 ## r11.135.20261028.2ff2348 (28 October 2026)
 
