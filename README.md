@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.136.20261028.dfbe08e. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.137.20261029.4ed0ca7. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -78,7 +78,7 @@ Recall what is stored about ONE entity: finds the entity named `subject` by its 
 
 Parameters:
 - as_of (string): Read the memory as it was KNOWN at this instant (ISO 8601 date or date-time; a bare date is the end of that day UTC): a fact stored after it is not visible. Leave it out for now.
-- attribute (object): Find entities BY an attribute's current value, instead of by name: {"key": "ndis_number", "value": "430000001"} (optionally "type"). Only this scope is searched, the end user's own when user_id is set. Send it instead of subject.
+- attribute (object): Find entities BY an attribute's current value, instead of by name: {"key": "ndis_number", "value": "430000001"} (optionally "type": how to read the VALUE, one of string, integer, decimal, boolean, date or datetime; it is never the entity's class). Only this scope is searched, the end user's own when user_id is set. Send it instead of subject.
 - compact (boolean): true: each item ONCE (text, kind, the fact's subject / relation / object, an entity's attributes as name: value, doc_id, source, date, score, seed) without the retrieval diagnostics (chunks, seeds, seeding, traversal): a fraction of the bytes. Leave it out for the full reply.
 - k (integer 1 to 1000): Most facts to return.
 - subject (string): The entity name to recall from: exact, or a similar spelling or letter case.
@@ -289,7 +289,7 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 
 ## Pages
 
-- https://one.semurg.io/: Semurg is the memory layer for AI agents and agent frameworks: one shared memory over MCP or plain HTTP that outlives the session, with a knowledge graph, vector search and graph RAG built in, bigger than RAM, on your own hardware. One engine, written from scratch, for ten data domains, measured in the open domain by domain. The first node is free, forever.
+- https://one.semurg.io/: Centralise your data. Make it live for your AI: knowledge graph, vectors, graph RAG, every answer cited. Automate with persistent agent teams. First node free.
 - https://one.semurg.io/agents: A shared memory for AI agents: remember, recall, relate and forget facts and relationships through MCP or plain HTTP, in the same store that serves your graph, vector and retrieval work.
 - https://one.semurg.io/develop: Build vector and graph RAG on one engine: vectors and graph on one copy of your data, relationships written as you write the data, and no new query language to learn.
 - https://one.semurg.io/commands: Every command Semurg tells you or your coding agent to run, read from the source and run against each published release. This file, as a page.
@@ -297,9 +297,9 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 - https://one.semurg.io/models: Open language and retrieval models, each with the speed one user sees and the total across many users, generated from the release record.
 - https://one.semurg.io/clusters: A Semurg cluster runs one engine across several machines: data and work spread over every disk and core of every node. Start on a free first node, add licensed nodes as your data grows.
 - https://one.semurg.io/performance: Write, read, traverse and scan, measured on the whole cluster at every release, with the machine, the door, the concurrency, the utilisation and where the data was served from behind each figure, and its trend across releases.
-- https://one.semurg.io/benchmark: Graph, vector, columnar, key-value, time-series, object, document, search, streaming, vector + graph RAG and knowledge graph measured on Semurg r11.118 to r11.127 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine.
+- https://one.semurg.io/benchmark: Graph, vector, relational, columnar, key-value, time-series, object, document, search, streaming, vector + graph RAG and knowledge graph measured on Semurg r11.118 to r11.127 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine.
 - https://one.semurg.io/durability: What happens to your data when a Semurg node is killed, its disk fills or slows, or the power is cut: measured on published releases, with results pending where a test has not run yet.
-- https://one.semurg.io/cloud: Rent a dedicated server with Semurg installed: choose the size and region, pay for 30 days, and within minutes Semurg is serving on it with Claude Code connected if you choose. Your SSH key is the only way in.
+- https://one.semurg.io/cloud: Rent a dedicated server with Semurg installed: choose the size and region, pay for the first 24 hours, and within minutes Semurg is serving on it with Claude Code connected if you choose. Your SSH key is the only way in.
 - https://one.semurg.io/pricing: A flat licence per node: bought once for the life of that hardware, or annually at the lifetime price spread over a five-year working life. The first node is free, forever. Support is optional at 20% of the lifetime list price per year, and updates are free from the Marketplace.
 - https://one.semurg.io/consulting: We build an organisation's enterprise in a box on Semurg: its databases, object stores and documents synced into one knowledge graph with an ontology, and persistent agents working on it, on your own hardware. Priced on request; the node licences are bought separately.
 - https://one.semurg.io/install: Download the installer, check it against the published checksums, and run a node on your own machine. The first node is free, forever. No account, no upload, no call home.
