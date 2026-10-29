@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.137.20261029.4ed0ca7. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.138.20261029.4109aec. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -28,7 +28,7 @@ Claude Code: one user-scope entry, written by Claude Code's own command. Run it 
     claude mcp add-json --scope user semurg '{"type":"http","url":"http://127.0.0.1:4000/v1/mcp","headers":{"Authorization":"Bearer ${SEMURG_API_TOKEN}","X-Semurg-Scope":"default"}}'
     # Claude Code reads the token from the SEMURG_API_TOKEN environment variable when it starts
 
-Connected on release r11.132.20261027.a274a28: Claude Code's own client listed every memory tool that release served.
+Connected on release r11.137.20261029.4ed0ca7: Claude Code's own client listed every memory tool that release served.
 
 Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04), which is being tested, as is Docker Desktop on Windows; otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
 
@@ -161,11 +161,12 @@ Parameters:
 
 ### comms_send (writes)
 
-Send a message from YOU to one or more addresses on this cluster (humans or agents, `name@<cluster domain>`). The text is stored ONCE, as a memory passage of the CONVERSATION of its audience (you + the recipients); recipients read it in their inbox / thread, and every member can recall it. Answers the message id, the conversation id, the passage id and `delivered_to`. Refused by name: `address_unknown` (the detail names every unknown address; nothing is sent), `recipients_too_many` (above 4096), `subject_too_long`, `body_too_large`. A write: it needs an API token.
+Send a message from YOU to one or more addresses on this cluster (humans or agents, `name@<cluster domain>`). The text is stored ONCE, as a memory passage of the CONVERSATION of its audience (you + the recipients); recipients read it in their inbox / thread, and every member can recall it. Answers the message id, the conversation id, the passage id and `delivered_to`. A recipient OUTSIDE this cluster (any other domain) is sent by internet mail when the operator has switched the outbound gateway on: you then name `from`, one of YOUR addresses on this cluster, and the answer carries `deliveries` (one per outside domain, state `queued`); read the message later to see each delivery's state (`queued`, `deferred`, `delivered`, `bounced`). Refused by name: `address_unknown` (the detail names every unknown address; nothing is sent), `recipients_too_many` (above 4096), `subject_too_long`, `body_too_large`, and for outside addresses `foreign_recipient_gateway_off`, `from_missing`, `from_not_yours`, `agent_foreign_send_needs_approval`, `foreign_recipients_too_many` (above 50). A write: it needs an API token.
 
 Parameters:
 - to (array, required): The recipients' addresses, 1 to 4096.
 - body (string, required): The message text, at most 16 MiB.
+- from (string): Required when any recipient is outside this cluster: one of YOUR addresses on this cluster, the sender the outside recipient sees.
 - reply_to (string): Optional: the id of the message this replies to.
 - subject (string): Optional subject, at most 1024 bytes.
 - user_id (string): Optional END USER inside your key (one app, many end users): the call is then that end user's. When the connection sets the X-Semurg-User header, that header IS the end user and a different user_id is refused.
@@ -224,7 +225,7 @@ Each route takes a JSON body with the same fields as the tool of the same name, 
     POST /v1/memory/import
     POST /v1/memory/audit
 
-Both examples ran against a fresh node on release r11.132.20261027.a274a28, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
+Both examples ran against a fresh node on release r11.137.20261029.4ed0ca7, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
 
     curl -sS http://127.0.0.1:4000/v1/memory/remember \
       -H "Authorization: Bearer $SEMURG_API_TOKEN" \
@@ -287,18 +288,44 @@ There are two kinds of app. An EXTERNAL app, in any language and any web framewo
 - Across packs, an app uses only what a pack declares it exposes.
 - A web interface is Phoenix LiveView. A controller-only or JSON-only surface is refused.
 
+## Build an enterprise in a box from Seed
+
+Seed plants an enterprise application on your node. It is an EXTERNAL app (above), in Elixir and Phoenix LiveView, and it keeps every byte on the node through the node's public API. Every part of the business is a record type, its declared actions and one responsible agent, and every agent answers three questions: what am I, am I working (measured now, never asserted), and what can I not see. The planted application starts with a team of agents that is always on, a first module (People), an agents screen, and an acceptance test that proves all of it against your node. You need a running node with its token in $TOKEN (above) and, on the machine that plants it, Elixir 1.15 or newer with mix, plus curl, tar and sha256sum. Phoenix's generator (phx_new 1.8.16) installs itself from Hex when it is missing.
+
+Plant it and prove it. The last command ends with `N tests, 0 failures`, and the test never passes without a node:
+
+    semurg seed new acme --node http://127.0.0.1:4000 --token "$TOKEN"
+    cd acme && mix setup
+    SEMURG_URL=http://127.0.0.1:4000 SEMURG_API_TOKEN="$TOKEN" mix test
+
+Run it with `PORT=4001 mix phx.server` and the same two settings in the shell: the agents screen is on http://localhost:4001, and the node keeps its own port 4000. Without the `semurg` command, the same generator is in the clients archive (above): `elixir clients/seed/seed_new.exs acme --node <url> --token <token> --client-path clients/elixir`.
+
+Grow it one part of the business at a time, the same way every time:
+
+1. Add a part: a record type, its declared actions and ONE responsible agent. Copy the People module and its agent (`people.ex`, `people/agent.ex`), rename the type and the actions, and add the agent to the team's list (`Seed.Team.agents/0`). A write is a new fact on the node (`Store.remember/3`), never a change in place; a read is `Store.recall/2`.
+2. Agents act inside the business from day one. Anything that leaves it (a payment, an email to a customer, a signature) is prepared by its agent and approved by a person until the agent's record earns it the right to act alone: declare it under `outward_actions` in the agent's `capability/1`.
+3. Bring in the systems you already use through the Marketplace's two-way integrations instead of writing connectors.
+4. Keep the three answers honest: health is measured, never asserted; blind spots are named; a failure is declared by name, never swallowed. The team writes every agent's answers to the node every 30 seconds, so anything that reads your node (its MCP tools, the clients, a coding agent) reads your team too.
+
+The planted `SEED.md` says all of this for the application in hand. More: https://one.semurg.io/seed
+
 ## Pages
 
 - https://one.semurg.io/: Centralise your data. Make it live for your AI: knowledge graph, vectors, graph RAG, every answer cited. Automate with persistent agent teams. First node free.
 - https://one.semurg.io/agents: A shared memory for AI agents: remember, recall, relate and forget facts and relationships through MCP or plain HTTP, in the same store that serves your graph, vector and retrieval work.
-- https://one.semurg.io/develop: Build vector and graph RAG on one engine: vectors and graph on one copy of your data, relationships written as you write the data, and no new query language to learn.
-- https://one.semurg.io/commands: Every command Semurg tells you or your coding agent to run, read from the source and run against each published release. This file, as a page.
-- https://one.semurg.io/blog: The Semurg blog: announcements, how-to guides for agents and developers, engineering deep dives and thought leadership, every number linked to its record.
+- https://one.semurg.io/communications: Email and messaging native to Semurg, for people and AI agents: every message stays on your own cluster and becomes part of what your agents know. Addresses, sending and reading messages work today; group conversations and agent search are coming soon.
+- https://one.semurg.io/seed: Centralise your data. Make it live for your AI: knowledge graph, vectors, graph RAG, every answer cited. Automate with persistent agent teams. First node free.
 - https://one.semurg.io/models: Open language and retrieval models, each with the speed one user sees and the total across many users, generated from the release record.
 - https://one.semurg.io/clusters: A Semurg cluster runs one engine across several machines: data and work spread over every disk and core of every node. Start on a free first node, add licensed nodes as your data grows.
+- https://one.semurg.io/benchmark: Graph, vector, relational, columnar, key-value, time-series, object, document, search, streaming, vector + graph RAG and knowledge graph measured on Semurg r11.118 to r11.137 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine.
 - https://one.semurg.io/performance: Write, read, traverse and scan, measured on the whole cluster at every release, with the machine, the door, the concurrency, the utilisation and where the data was served from behind each figure, and its trend across releases.
-- https://one.semurg.io/benchmark: Graph, vector, relational, columnar, key-value, time-series, object, document, search, streaming, vector + graph RAG and knowledge graph measured on Semurg r11.118 to r11.127 against Neo4j, ArangoDB, FalkorDB, ArcadeDB, SurrealDB and others: the same question, the same answer and the same machine.
 - https://one.semurg.io/durability: What happens to your data when a Semurg node is killed, its disk fills or slows, or the power is cut: measured on published releases, with results pending where a test has not run yet.
+- https://one.semurg.io/develop: Build vector and graph RAG on one engine: vectors and graph on one copy of your data, relationships written as you write the data, and no new query language to learn.
+- https://one.semurg.io/commands: Every command Semurg tells you or your coding agent to run, read from the source and run against each published release. This file, as a page.
+- https://one.semurg.io/evaluate: How to evaluate Semurg in an afternoon: run a node, connect your agents, load your own data, reproduce the published benchmarks on your own server, and what the durability tests show.
+- https://one.semurg.io/integrations: Integrations link Semurg to AI agents, databases and business systems, both ways, each proven by a round trip and shared by every business on Semurg. Agent integrations, CSV loading and memory export and import work today; database and business-system integrations are coming soon.
+- https://one.semurg.io/marketplace: The Marketplace is where a Semurg node gets what it runs. Release updates and model installs work today, free; integrations, packs and apps are coming soon.
+- https://one.semurg.io/blog: The Semurg blog: announcements, how-to guides for agents and developers, engineering deep dives and thought leadership, every number linked to its record.
 - https://one.semurg.io/cloud: Rent a dedicated server with Semurg installed: choose the size and region, pay for the first 24 hours, and within minutes Semurg is serving on it with Claude Code connected if you choose. Your SSH key is the only way in.
 - https://one.semurg.io/pricing: A flat licence per node: bought once for the life of that hardware, or annually at the lifetime price spread over a five-year working life. The first node is free, forever. Support is optional at 20% of the lifetime list price per year, and updates are free from the Marketplace.
 - https://one.semurg.io/consulting: We build an organisation's enterprise in a box on Semurg: its databases, object stores and documents synced into one knowledge graph with an ontology, and persistent agents working on it, on your own hardware. Priced on request; the node licences are bought separately.
