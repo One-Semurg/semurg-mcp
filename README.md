@@ -1,4 +1,4 @@
-<!-- Generated from the Semurg source of release r11.139.20261030.0186d91. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
+<!-- Generated from the Semurg source of release r11.140.20261030.b7e1c97. The canonical, always-current copy is https://one.semurg.io/llms.txt -->
 # Semurg
 
 > The memory layer for AI agents: knowledge graph, vectors and graph RAG on one engine, written from scratch. Run it on your own hardware. This file is for coding agents: how to install a node, how to connect a coding agent, the memory tools an agent calls over MCP or HTTP, the same calls in each client, what Semurg publishes, and the rules an app built on a node follows. Every command, tool, route and client call named here is read from the source, checked against it before this file is published, and the commands are run against each published release.
@@ -28,7 +28,7 @@ Claude Code: one user-scope entry, written by Claude Code's own command. Run it 
     claude mcp add-json --scope user semurg '{"type":"http","url":"http://127.0.0.1:4000/v1/mcp","headers":{"Authorization":"Bearer ${SEMURG_API_TOKEN}","X-Semurg-Scope":"default"}}'
     # Claude Code reads the token from the SEMURG_API_TOKEN environment variable when it starts
 
-Connected on release r11.137.20261029.4ed0ca7: Claude Code's own client listed every memory tool that release served.
+Connected on release r11.139.20261030.0186d91: Claude Code's own client listed every memory tool that release served.
 
 Claude Desktop: it runs on macOS and Windows and Semurg runs on Linux x86_64, so the node is reached at 127.0.0.1:4000 one of two ways: on a Windows machine, run the node on the same machine under WSL2 (Ubuntu 24.04), which is being tested, as is Docker Desktop on Windows; otherwise run it on a Linux machine and forward its port to the desktop with ssh -N -L 4000:127.0.0.1:4000 you@your-node, so the token never crosses the network over plain HTTP. A remote node over HTTPS with sign-in (OAuth) is not covered here yet. Claude Desktop starts only local (stdio) MCP servers, so the mcp-remote bridge, run by npx (it needs Node.js), carries it to the node's streamable HTTP door. Put this in claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/; Windows: %APPDATA%\Claude\), put your token in place of <token>, and restart Claude Desktop. The file then holds the token: keep it private.
 
@@ -225,7 +225,7 @@ Each route takes a JSON body with the same fields as the tool of the same name, 
     POST /v1/memory/import
     POST /v1/memory/audit
 
-Both examples ran against a fresh node on release r11.137.20261029.4ed0ca7, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
+Both examples ran against a fresh node on release r11.139.20261030.0186d91, and each answer was read back. They use http://127.0.0.1:4000, the address a fresh node serves; behind your own TLS proxy use its https address instead. Set SEMURG_API_TOKEN to your node's API token.
 
     curl -sS http://127.0.0.1:4000/v1/memory/remember \
       -H "Authorization: Bearer $SEMURG_API_TOKEN" \
