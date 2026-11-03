@@ -1,0 +1,39 @@
+{
+  "name": "semurg-memory",
+  "displayName": "Semurg Memory",
+  "version": "0.1.0",
+  "description": "Your AI forgets. Semurg gives every AI agent one memory that lasts, shared across your tools and your team, with sources. Connects Claude Code to your Semurg memory over MCP.",
+  "author": {
+    "name": "Semurg",
+    "url": "https://one.semurg.io"
+  },
+  "homepage": "https://one.semurg.io/agents",
+  "repository": "https://github.com/One-Semurg/semurg-mcp",
+  "license": "Apache-2.0",
+  "keywords": ["memory", "mcp", "knowledge-graph", "agents", "rag"],
+  "icon": "./assets/logo.svg",
+  "documentationUrl": "https://one.semurg.io/agents",
+  "supportUrl": "https://one.semurg.io/contact",
+  "privacyPolicyUrl": "https://one.semurg.io/privacy",
+  "userConfig": {
+    "node_url": {
+      "type": "string",
+      "title": "Your Semurg address",
+      "description": "The MCP address of your Semurg memory. A fresh install serves http://127.0.0.1:4000/v1/mcp",
+      "default": "http://127.0.0.1:4000/v1/mcp"
+    },
+    "api_token": {
+      "type": "string",
+      "title": "API token",
+      "description": "Your Semurg API token (the installer prints it; also in ~/.config/semurg/token)",
+      "sensitive": true,
+      "required": true
+    },
+    "scope": {
+      "type": "string",
+      "title": "Memory scope",
+      "description": "Which memory this connection reads and writes. Agents that use the same scope share what is stored",
+      "default": "default"
+    }
+  }
+}

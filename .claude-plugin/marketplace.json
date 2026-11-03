@@ -1,0 +1,15 @@
+{
+  "name": "semurg",
+  "description": "Semurg memory for AI agents",
+  "owner": {
+    "name": "Semurg",
+    "url": "https://one.semurg.io"
+  },
+  "plugins": [
+    {
+      "name": "semurg-memory",
+      "source": "./plugins/semurg-memory",
+      "description": "Your AI forgets. Semurg gives every AI agent one memory that lasts, shared across your tools and your team, with sources."
+    }
+  ]
+}

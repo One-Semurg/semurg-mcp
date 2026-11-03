@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "semurg": {
+      "url": "${SEMURG_URL}",
+      "headers": {
+        "Authorization": "Bearer ${SEMURG_API_TOKEN}",
+        "X-Semurg-Scope": "${SEMURG_SCOPE}"
+      }
+    }
+  }
+}

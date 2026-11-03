@@ -1,0 +1,33 @@
+{
+  "name": "semurg-memory",
+  "description": "Your AI forgets. Semurg gives every AI agent one memory that lasts, shared across your tools and your team, with sources. Connects Cursor to your Semurg memory over MCP.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Semurg"
+  },
+  "homepage": "https://one.semurg.io/agents",
+  "repository": "https://github.com/One-Semurg/semurg-mcp",
+  "license": "Apache-2.0",
+  "keywords": ["memory", "mcp", "knowledge-graph", "agents", "rag"],
+  "logo": "assets/logo.svg",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "SEMURG_URL": {
+        "type": "string",
+        "description": "The MCP address of your Semurg memory. A fresh install serves http://127.0.0.1:4000/v1/mcp",
+        "default": "http://127.0.0.1:4000/v1/mcp"
+      },
+      "SEMURG_API_TOKEN": {
+        "type": "string",
+        "description": "Your Semurg API token (the installer prints it; also in ~/.config/semurg/token)"
+      },
+      "SEMURG_SCOPE": {
+        "type": "string",
+        "description": "Which memory this connection reads and writes. Agents that use the same scope share what is stored",
+        "default": "default"
+      }
+    },
+    "required": ["SEMURG_URL", "SEMURG_API_TOKEN"]
+  }
+}

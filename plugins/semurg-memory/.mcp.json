@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "semurg": {
+      "type": "http",
+      "url": "${user_config.node_url}",
+      "headers": {
+        "Authorization": "Bearer ${user_config.api_token}",
+        "X-Semurg-Scope": "${user_config.scope}"
+      }
+    }
+  }
+}
